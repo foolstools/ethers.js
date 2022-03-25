@@ -1,8 +1,9 @@
 
 import { deepCopy } from "@ethersproject/properties";
-import { fetchJson } from "@ethersproject/web";
+import { BatchConnectionInfo, ConnectionInfo, fetchJson } from '@ethersproject/web'
 
 import { JsonRpcProvider } from "./json-rpc-provider";
+import { Networkish } from '@ethersproject/networks'
 
 // Experimental
 
@@ -13,6 +14,14 @@ export class JsonRpcBatchProvider extends JsonRpcProvider {
         resolve: (result: any) => void,
         reject: (error: Error) => void
     }>;
+    _batchDuration: number = 10
+
+    constructor(url?: BatchConnectionInfo | ConnectionInfo | string, network?: Networkish) {
+        super(url, network)
+        if (typeof(url) === 'object' && "batchDuration" in url) {
+            this._batchDuration = url.batchDuration
+        }
+    }
 
     send(method: string, params: Array<any>): Promise<any> {
         const request = {
@@ -89,7 +98,7 @@ export class JsonRpcBatchProvider extends JsonRpcProvider {
                     });
                 });
 
-            }, 10);
+            }, this._batchDuration);
         }
 
         return promise;

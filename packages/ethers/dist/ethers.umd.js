@@ -26444,8 +26444,13 @@
 	// Experimental
 	var JsonRpcBatchProvider = /** @class */ (function (_super) {
 	    __extends(JsonRpcBatchProvider, _super);
-	    function JsonRpcBatchProvider() {
-	        return _super !== null && _super.apply(this, arguments) || this;
+	    function JsonRpcBatchProvider(url, network) {
+	        var _this = _super.call(this, url, network) || this;
+	        _this._batchDuration = 10;
+	        if (typeof (url) === 'object' && "batchDuration" in url) {
+	            _this._batchDuration = url.batchDuration;
+	        }
+	        return _this;
 	    }
 	    JsonRpcBatchProvider.prototype.send = function (method, params) {
 	        var _this = this;
@@ -26511,7 +26516,7 @@
 	                        inflightRequest.reject(error);
 	                    });
 	                });
-	            }, 10);
+	            }, this._batchDuration);
 	        }
 	        return promise;
 	    };

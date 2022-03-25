@@ -14,6 +14,9 @@ export declare type ConnectionInfo = {
     errorPassThrough?: boolean;
     timeout?: number;
 };
+export declare type BatchConnectionInfo = ConnectionInfo & {
+    batchDuration?: number
+};
 export interface OnceBlockable {
     once(eventName: "block", handler: () => void): void;
 }

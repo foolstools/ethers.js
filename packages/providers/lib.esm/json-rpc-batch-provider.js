@@ -1,8 +1,15 @@
 import { deepCopy } from "@ethersproject/properties";
-import { fetchJson } from "@ethersproject/web";
+import { fetchJson } from '@ethersproject/web';
 import { JsonRpcProvider } from "./json-rpc-provider";
 // Experimental
 export class JsonRpcBatchProvider extends JsonRpcProvider {
+    constructor(url, network) {
+        super(url, network);
+        this._batchDuration = 10;
+        if (typeof (url) === 'object' && "batchDuration" in url) {
+            this._batchDuration = url.batchDuration;
+        }
+    }
     send(method, params) {
         const request = {
             method: method,
@@ -66,7 +73,7 @@ export class JsonRpcBatchProvider extends JsonRpcProvider {
                         inflightRequest.reject(error);
                     });
                 });
-            }, 10);
+            }, this._batchDuration);
         }
         return promise;
     }
